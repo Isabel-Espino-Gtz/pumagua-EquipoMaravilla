@@ -1,4 +1,4 @@
-# Práctica 2
+# Proyecto pumagua
 
 ## Integrantes
 Bernal Esquivel Mariana Morayma 
