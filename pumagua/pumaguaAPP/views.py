@@ -1,6 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib import messages
 import folium
 from pumaguaAPP.models import bebederos
+from pumaguaAPP.models import Reporte
 from django.db.models import Q
 from folium.plugins import LocateControl
 import json
@@ -113,8 +115,16 @@ def index(request):
 
     f = folium.Figure(height=500)
     f.add_child(m)
-    contexto = {'map': m._repr_html_(),
-                'feedback_resultados': mensaje}
+
+    mensaje_exito = ''
+    if messages.get_messages(request):
+        mensaje_exito = [message for message in messages.get_messages(request) if message.level_tag == 'success']
+    
+    contexto = {
+        'map': m._repr_html_(),
+        'feedback_resultados': mensaje,
+        'mensaje_exito': mensaje_exito
+    }
 
     return render(request, "index.html", contexto)
 
@@ -129,3 +139,27 @@ def imagenes_bebederos(id_bebedero):
 
 def informes(request):
     return render(request,"informes.html")
+
+def cargaReportes(request):
+    bebederos_list = bebederos.objects.values_list('id_bebedero', 'nombre')
+    context = {
+        'bebederos': bebederos_list
+    }
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        email = request.POST.get('email')
+        id_bebedero = request.POST.get('bebedero')
+        bebedero = bebederos.objects.get(pk=id_bebedero)
+
+        descripcion = request.POST.get('descripcion')
+        extra = request.POST.get('extra')
+
+        reporte = Reporte(nombre=nombre, email=email, bebedero=bebedero, descripcion=descripcion, dato_extra=extra)
+        reporte.save()
+        
+        # Envía un mensaje de éxito que será capturado en la vista que redirigimos
+        messages.success(request, 'El reporte ha sido enviado correctamente.')
+        
+        return redirect('/')
+    
+    return render(request, 'reportes.html', context)

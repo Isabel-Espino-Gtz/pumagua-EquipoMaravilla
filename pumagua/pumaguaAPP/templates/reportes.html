@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}
+Bebederos en CU
+{% endblock %}
+
+{% block body %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<form method="POST" class="formulario-report">
+  {% csrf_token %}
+  <br><br><br>
+  <h2 class="text-center">Generar un reporte</h2>
+  <br>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Nombre</label>
+    <input type="nombre" class="form-control" name="nombre">
+  </div>
+  <div class="mb-3">
+    <label for="exampleInputPassword1" class="form-label">Email</label>
+    <input type="email" class="form-control" name="email">
+  </div>
+  <div class="mb-3">
+    <label for="disabledSelect" class="form-label">Selecciona el bebedero</label>
+    
+    <select id="disabledSelect" class="form-select" name="bebedero">
+      {% for bebedero in bebederos %}
+        <option value="{{ bebedero.0 }}">{{ bebedero.1 }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Descripcion</label>
+    <input type="text" class="form-control" name="descripcion">
+  </div>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Datos extra</label>
+    <input type="text" class="form-control" name="extra">
+  </div>
+  <button type="submit" class="btn btn-primary">Enviar reporte</button>
+</form>
+
+{% for bebederos in bebederos %}
+
+
+<p>{{ bebedero.nombre }}</p>
+{% endfor %}
+
+{% endblock %}

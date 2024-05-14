@@ -20,3 +20,15 @@ class bebederos(models.Model):
 
     def __str__(self):
         return f'Nombre: {self.nombre} Ubicacion: {self.ubicacion}'
+
+class Reporte(models.Model):
+    nombre = models.CharField(max_length=50)
+    email = models.EmailField()
+    bebedero = models.ForeignKey(bebederos, on_delete=models.CASCADE)
+    fecha_reporte = models.DateTimeField(auto_now_add=True)
+    descripcion = models.TextField()  # Añadido para describir el reporte
+    dato_extra = models.CharField(max_length=255, blank=True, null=True)  # Campo opcional para información adicional
+
+    def __str__(self):
+        info_extra = f' - {self.dato_extra}' if self.dato_extra else ''
+        return f'Reporte de {self.bebedero.nombre} - {self.descripcion}{info_extra}, hecho por {self.nombre} ({self.email}) en {self.fecha_reporte.strftime("%Y-%m-%d %H:%M")}'
